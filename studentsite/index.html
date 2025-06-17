@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panda Student Management</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <img src="img/panda-logo.png" alt="Panda Logo">
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#students">Students</a>
+      <a href="#courses">Courses</a>
+      <a href="#about">About</a>
+      <a href="dashboard.php">Dashboard</a>
+      <a href="login.php" class="btn">Login</a>
+      <a href="register.php" class="btn">Sign up</a>
+    </nav>
+    <button id="darkModeToggle" class="dark-toggle" title="Toggle Dark Mode">🌙</button>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero" id="home">
+    <div class="hero-overlay"></div>
+    <h1>Welcome to Panda Wise</h1>
+    <p>Manage your students and courses with a smile!</p>
+  </section>
+
+  <!-- STUDENTS SECTION -->
+  <section class="section" id="students">
+    <h2>Our Students</h2>
+
+    <!-- SEARCH & FILTER -->
+    <div class="search-filter">
+      <input type="text" id="searchInput" placeholder="Search student name...">
+      <select id="classFilter">
+        <option value="">All Classes</option>
+        <option value="Science">Class 10 - Science</option>
+        <option value="Arts">Class 11 - Arts</option>
+      </select>
+    </div>
+
+    <div class="card-grid">
+      <div class="card" data-name="Jane Doe" data-class="Science">
+        <h3>Jane Doe</h3>
+        <p>Class 10 - Science</p>
+      </div>
+      <div class="card" data-name="John Smith" data-class="Arts">
+        <h3>John Smith</h3>
+        <p>Class 11 - Arts</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="courses">
+    <h2>Available Courses</h2>
+    <div class="card-grid">
+      <div class="card">
+        <h3>Mathematics</h3>
+        <p>Teacher: Mr. Panda</p>
+      </div>
+      <div class="card">
+        <h3>History</h3>
+        <p>Teacher: Mrs. Bamboo</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <h2>About Us</h2>
+    <p>This student management system is designed to be simple, fun, and panda-fied! We help schools keep track of students and courses easily.</p>
+  </section>
+
+<section class="section" id="announcements">
+  <h2>Announcements</h2>
+  <ul class="announcement-list">
+    <li><strong>June 15:</strong> Mid-Year Exam Timetable Released!</li>
+    <li><strong>June 20:</strong> Parent-Teacher Meeting</li>
+    <li><strong>July 1:</strong> Registration Opens for Co-curricular Clubs</li>
+  </ul>
+</section>
+
+<section class="section" id="top-students">
+  <h2>Top Performers</h2>
+  <div class="card-grid">
+    <div class="card">
+      <img src="assets/images/student-placeholder.png" alt="Student">
+      <h3>Alicia Tan</h3>
+      <p>Top Scorer – Mathematics</p>
+    </div>
+    <div class="card">
+      <img src="assets/images/student-placeholder.png" alt="Student">
+      <h3>Adam Lim</h3>
+      <p>Top Scorer – History</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="stats">
+  <h2>Platform Overview</h2>
+  <div class="stats-grid">
+    <div class="stat-box">
+      <h3>120+</h3>
+      <p>Registered Students</p>
+    </div>
+    <div class="stat-box">
+      <h3>8</h3>
+      <p>Active Courses</p>
+    </div>
+    <div class="stat-box">
+      <h3>5</h3>
+      <p>Teachers</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="theme-toggle">
+  <h2>Toggle Theme</h2>
+  <label class="switch">
+    <input type="checkbox" id="darkModeToggle">
+    <span class="slider round"></span>
+  </label>
+</section>
+
+  <footer>
+    <div class="footerLeft">
+      <div class="footerMenu">
+        <h1 class="fMenuTitle">About Us</h1>
+        <ul class="fList">
+          <li class="fListItem">Company</li>
+          <li class="fListItem">Contact</li>
+          <li class="fListItem">Careers</li>
+          <li class="fListItem">Affiliates</li>
+          <li class="fListItem">Stores</li>
+        </ul>
+      </div>
+      <div class="footerMenu">
+        <h1 class="fMenuTitle">Useful Links</h1>
+        <ul class="fList">
+          <li class="fListItem">Support</li>
+          <li class="fListItem">Refund</li>
+          <li class="fListItem">FAQ</li>
+          <li class="fListItem">Feedback</li>
+          <li class="fListItem">Stories</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footerRight">
+      <div class="footerRightMenu">
+        <h1 class="fMenuTitle">Subscribe to our channel</h1>
+        <div class="fMail">
+          <input type="text" placeholder="your@email.com" class="fInput">
+          <button class="fButton">Join!</button>
+        </div>
+      </div>
+      <div class="footerRightMenu">
+        <span class="copyright">© 2025 Panda Student Management. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <button id="backToTop" title="Go to top">↑</button>
+
+  <script src="app.js"></script>
+</body>
+</html>
