@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 17, 2025 at 09:34 AM
+-- Generation Time: Jun 21, 2025 at 05:48 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -29,11 +29,21 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `attendance` (
   `id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL,
-  `course_id` int(11) NOT NULL,
-  `date` date NOT NULL,
-  `status` enum('Present','Absent','Late','Excused') NOT NULL
+  `student_id` int(11) DEFAULT NULL,
+  `course_id` int(11) DEFAULT NULL,
+  `date` date DEFAULT NULL,
+  `status` enum('Present','Absent','Late') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `attendance`
+--
+
+INSERT INTO `attendance` (`id`, `student_id`, `course_id`, `date`, `status`) VALUES
+(1, 1, 1, '2025-06-20', 'Present'),
+(2, 1, 2, '2025-06-20', 'Late'),
+(3, 2, 1, '2025-06-20', 'Absent'),
+(4, 2, 1, '2025-06-11', 'Late');
 
 -- --------------------------------------------------------
 
@@ -43,20 +53,16 @@ CREATE TABLE `attendance` (
 
 CREATE TABLE `courses` (
   `id` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `description` text DEFAULT NULL
+  `name` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `courses`
 --
 
-INSERT INTO `courses` (`id`, `name`, `description`) VALUES
-(1, 'Math', NULL),
-(2, 'Science', 'very bad\r\n'),
-(3, 'History', NULL),
-(4, 'Computer Science', NULL),
-(5, 'Mathematics', 'The easiest subject');
+INSERT INTO `courses` (`id`, `name`) VALUES
+(1, 'Mathematics'),
+(2, 'Science');
 
 -- --------------------------------------------------------
 
@@ -66,14 +72,25 @@ INSERT INTO `courses` (`id`, `name`, `description`) VALUES
 
 CREATE TABLE `grades` (
   `id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL,
-  `course_id` int(11) NOT NULL,
+  `student_id` int(11) DEFAULT NULL,
+  `course_id` int(11) DEFAULT NULL,
   `assignment_name` varchar(100) DEFAULT NULL,
-  `score` decimal(5,2) DEFAULT NULL,
-  `max_score` decimal(5,2) DEFAULT NULL,
-  `grade` char(2) DEFAULT NULL,
-  `remarks` text DEFAULT NULL
+  `score` int(11) DEFAULT NULL,
+  `max_score` int(11) DEFAULT NULL,
+  `grade` varchar(5) DEFAULT NULL,
+  `remarks` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `grades`
+--
+
+INSERT INTO `grades` (`id`, `student_id`, `course_id`, `assignment_name`, `score`, `max_score`, `grade`, `remarks`) VALUES
+(1, 1, 1, 'Algebra Test', 85, 100, 'A', 'Well done'),
+(2, 1, 2, 'Lab Report', 75, 100, 'B', 'Good effort'),
+(3, 2, 1, 'Algebra Test', 90, 100, 'A+', 'Excellent'),
+(4, 1, 1, 'Midterm Exam', 88, 100, 'A', 'Improved well'),
+(5, 1, 1, 'Final Exam', 91, 100, 'A+', 'Excellent work');
 
 -- --------------------------------------------------------
 
@@ -83,25 +100,17 @@ CREATE TABLE `grades` (
 
 CREATE TABLE `students` (
   `id` int(11) NOT NULL,
-  `name` varchar(100) DEFAULT NULL,
-  `age` int(11) DEFAULT NULL,
-  `class` varchar(50) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `course_id` int(11) DEFAULT NULL,
-  `course` varchar(100) DEFAULT NULL
+  `name` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `students`
 --
 
-INSERT INTO `students` (`id`, `name`, `age`, `class`, `email`, `course_id`, `course`) VALUES
-(1, 'DIVYAA RASHMIKA A/P MUNISWARAN', NULL, NULL, 'rashmikadivyaa@gmail.com', 2, NULL),
-(2, 'Divyaa', NULL, NULL, 'rashmikadivyaa@gmail.com', 1, NULL),
-(3, 'DIVYAA RASHMIKA A/P MUNISWARAN', NULL, NULL, 'rashmikadivyaa@gmail.com', 1, NULL),
-(4, 'DIVYAA RASHMIKA A/P MUNISWARAN', NULL, NULL, 'rashmikadivyaa@gmail.com', 1, NULL),
-(5, 'DIVYAA RASHMIKA A/P MUNISWARAN', NULL, NULL, 'm-10707908@moe-dl.edu.my', 2, NULL),
-(6, 'john', NULL, NULL, 'm-10707908@moe-dl.edu.my', 1, NULL);
+INSERT INTO `students` (`id`, `name`, `email`) VALUES
+(1, 'Alicia Tan', 'alicia@example.com'),
+(2, 'Benjamin Lee', 'benjamin@example.com');
 
 -- --------------------------------------------------------
 
@@ -123,7 +132,8 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `username`, `password`, `profile_pic`) VALUES
 (1, 'divyrashh_', '$2y$10$9tIfhQj0soIB.Vd0uUuJzO8xUgETgB7u4xq9Uk15sfx63mGJzJv5O\r\n', NULL),
 (5, 'testuser', '$2y$10$giAGvtHh1rM3PLWhHmtlsuuR5.bJgf4ePU3Z0txEgpaX3NqJ0twKS', NULL),
-(6, 'testuser123', '$2y$10$AQaqWsY7VlRJ3UeGuk2o0eo/WUlFKWGGz1bSPN40aRIqHNQgdxLwW', NULL);
+(6, 'testuser123', '$2y$10$AQaqWsY7VlRJ3UeGuk2o0eo/WUlFKWGGz1bSPN40aRIqHNQgdxLwW', NULL),
+(7, 'nishi', '$2y$10$DqZhrWlfI4dnI9tkCg5Srez3zWWNfclhdlljMSCORba5GkenhqLKq', 'uploads/6854d96e07790.png');
 
 --
 -- Indexes for dumped tables
@@ -172,31 +182,31 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `attendance`
 --
 ALTER TABLE `attendance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `grades`
 --
 ALTER TABLE `grades`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables
