@@ -136,15 +136,19 @@ include 'db.php';
     <table>
       <thead>
         <tr>
-          <th>Student ID</th>
-          <th>Course ID</th>
+          <th>Student Name</th>
+          <th>Course</th>
           <th>Date</th>
           <th>Status</th>
         </tr>
       </thead>
       <tbody>
         <?php
-        $attendance_sql = "SELECT * FROM attendance ORDER BY date DESC LIMIT 20";
+        $attendance_sql = "SELECT a.*, s.name AS student_name, c.name AS course_name 
+                           FROM attendance a 
+                           JOIN students s ON a.student_id = s.id 
+                           JOIN courses c ON a.course_id = c.id 
+                           ORDER BY a.date DESC LIMIT 20";
         $attendance_result = $conn->query($attendance_sql);
 
         if ($attendance_result && $attendance_result->num_rows > 0):
@@ -152,8 +156,8 @@ include 'db.php';
             $statusClass = strtolower($row['status']);
             ?>
             <tr>
-              <td><?php echo htmlspecialchars($row['student_id']); ?></td>
-              <td><?php echo htmlspecialchars($row['course_id']); ?></td>
+              <td><?php echo htmlspecialchars($row['student_name']); ?></td>
+              <td><?php echo htmlspecialchars($row['course_name']); ?></td>
               <td><?php echo htmlspecialchars($row['date']); ?></td>
               <td><span class="status <?php echo $statusClass; ?>"><?php echo htmlspecialchars($row['status']); ?></span></td>
             </tr>
@@ -172,8 +176,8 @@ include 'db.php';
     <table>
       <thead>
         <tr>
-          <th>Student ID</th>
-          <th>Course ID</th>
+          <th>Student Name</th>
+          <th>Course</th>
           <th>Assignment</th>
           <th>Score</th>
           <th>Max Score</th>
@@ -183,14 +187,18 @@ include 'db.php';
       </thead>
       <tbody>
         <?php
-        $grades_sql = "SELECT * FROM grades ORDER BY student_id LIMIT 20";
+        $grades_sql = "SELECT g.*, s.name AS student_name, c.name AS course_name 
+                       FROM grades g 
+                       JOIN students s ON g.student_id = s.id 
+                       JOIN courses c ON g.course_id = c.id 
+                       ORDER BY g.student_id LIMIT 20";
         $grades_result = $conn->query($grades_sql);
 
         if ($grades_result && $grades_result->num_rows > 0):
           while ($row = $grades_result->fetch_assoc()): ?>
             <tr>
-              <td><?php echo htmlspecialchars($row['student_id']); ?></td>
-              <td><?php echo htmlspecialchars($row['course_id']); ?></td>
+              <td><?php echo htmlspecialchars($row['student_name']); ?></td>
+              <td><?php echo htmlspecialchars($row['course_name']); ?></td>
               <td><?php echo htmlspecialchars($row['assignment_name']); ?></td>
               <td><?php echo htmlspecialchars($row['score']); ?></td>
               <td><?php echo htmlspecialchars($row['max_score']); ?></td>
@@ -207,6 +215,7 @@ include 'db.php';
   </div>
 
   <div style="text-align:center;">
+    <a href="add_grade.php" class="back-link">➕ Add New Grade</a>
     <a href="dashboard.php" class="back-link">← Back to Dashboard</a>
   </div>
 
