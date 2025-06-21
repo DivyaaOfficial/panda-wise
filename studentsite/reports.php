@@ -216,6 +216,7 @@ include 'db.php';
 
   <div style="text-align:center;">
     <a href="add_grade.php" class="back-link">➕ Add New Grade</a>
+    <a href="add_attendance.php" class="back-link">➕ Add Attendance</a>
     <a href="dashboard.php" class="back-link">← Back to Dashboard</a>
   </div>
 
