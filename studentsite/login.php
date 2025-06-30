@@ -7,6 +7,7 @@ $error = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
     $password = $_POST['password'];
+    $selected_role = $_POST['role'];
 
     $sql = "SELECT * FROM users WHERE username = ?";
     $stmt = $conn->prepare($sql);
@@ -17,19 +18,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result->num_rows === 1) {
         $row = $result->fetch_assoc();
 
-        if (password_verify($password, $row['password'])) {
+        // Check password and role
+        if (password_verify($password, $row['password']) && $row['role'] === $selected_role) {
             $_SESSION['username'] = $username;
-            header("Location: dashboard.php");
+            $_SESSION['role'] = $row['role'];
+
+            if ($row['role'] === 'teacher') {
+                header("Location: teacher_dashboard.php");
+            } else {
+                $_SESSION['student_id'] = $row['id'];
+                header("Location: student_dashboard.php");
+            }
             exit();
         } else {
-            $error = "Incorrect password.";
+            $error = "❌ Invalid password or role selected.";
         }
     } else {
-        $error = "Username not found.";
+        $error = "❌ User not found.";
     }
-}
+} // 👈 THIS was missing in your version!
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -97,7 +105,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       font-weight: 600;
     }
 
-    .login-content input {
+    .login-content input,
+    .login-content select {
       width: 100%;
       padding: 14px;
       margin: 10px 0;
@@ -105,6 +114,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       border-radius: 10px;
       font-size: 16px;
       outline: none;
+    }
+
+    .password-container {
+      position: relative;
+      width: 100%;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .toggle-password svg {
+      fill: #ccc;
     }
 
     .login-content button {
@@ -125,7 +152,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       background-color: #5a4db0;
     }
 
-    .forgot-link,
     .home-link {
       margin-top: 15px;
       display: block;
@@ -135,38 +161,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       transition: color 0.3s ease;
     }
 
-    .forgot-link:hover,
     .home-link:hover {
       color: #dcdcdc;
       text-decoration: underline;
     }
 
-    @media (max-width: 768px) {
-      .login-content h2 {
-        font-size: 26px;
-      }
+    .error-message {
+      color: #ffaaaa;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
 
-  <div class="bg">
-    <div class="overlay"></div>
-    <div class="login-content">
-      <h2>Login to Panda</h2>
-      <form action="login.php" method="POST">
-        <input type="text" name="username" placeholder="Username" required />
-        <input type="password" name="password" placeholder="Password" required />
-        <button type="submit">Log In</button>
-      </form>
+<div class="bg">
+  <div class="overlay"></div>
+  <div class="login-content">
+    <h2>Login to Panda</h2>
+    <form method="POST" action="login.php">
+  <input type="text" name="username" placeholder="Username" required />
+  <input type="password" name="password" placeholder="Password" required />
 
-      <a href="index.html" class="home-link">← Back to Home</a>
+  <select name="role" required>
+    <option value="">Select Role</option>
+    <option value="student">Student</option>
+    <option value="teacher">Teacher</option>
+  </select>
 
-      <?php if ($error): ?>
-        <p style="color: #ffaaaa; margin-top: 10px;"><?php echo $error; ?></p>
-      <?php endif; ?>
-    </div>
+  <button type="submit">Log In</button>
+</form>
+
+    <?php if ($error): ?>
+      <p class="error-message"><?= $error ?></p>
+    <?php endif; ?>
+
+    <a href="index.html" class="home-link">← Back to Home</a>
   </div>
+</div>
+
+<script>
+  function togglePassword() {
+    const passwordInput = document.getElementById("password");
+    const eyeIcon = document.getElementById("eye-icon");
+    passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+  }
+</script>
 
 </body>
 </html>
