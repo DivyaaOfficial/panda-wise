@@ -12,8 +12,8 @@ $error = "";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = trim($_POST['username']);
     $password = $_POST['password'];
+    $role = $_POST['role'];
 
-    // Check if username exists
     $check = $conn->prepare("SELECT * FROM users WHERE username = ?");
     $check->bind_param("s", $username);
     $check->execute();
@@ -23,11 +23,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error = "Username already taken.";
     } else {
         $hashed = password_hash($password, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+        $sql = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
         $stmt = $conn->prepare($sql);
         if ($stmt) {
-            $stmt->bind_param("ss", $username, $hashed);
+            $stmt->bind_param("sss", $username, $hashed, $role);
             if ($stmt->execute()) {
+                $new_user_id = $stmt->insert_id;
+
+                // If student, also add to students table
+                if ($role === 'student') {
+                    $default_name = $username; // or ask for name separately
+                    $stmt2 = $conn->prepare("INSERT INTO students (id, name) VALUES (?, ?)");
+                    $stmt2->bind_param("is", $new_user_id, $default_name);
+                    $stmt2->execute();
+                }
+
                 $success = "User registered successfully!";
             } else {
                 $error = "Registration failed: " . $stmt->error;
@@ -38,7 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -158,13 +167,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     .login-content a:hover {
       text-decoration: underline;
     }
-
+    .login-content select {
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      outline: none;
+    }
     @media (max-width: 768px) {
       .login-content h2 {
         font-size: 26px;
       }
     }
-  </style>
+   </style>
 </head>
 <body>
 
@@ -173,10 +190,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="login-content">
       <h2>Create an Account</h2>
 
-      <form method="POST" action="">
-        <input type="text" name="username" placeholder="Username" required />
-        <input type="password" name="password" placeholder="Password" required />
-        <button type="submit">Register</button>
+      <form method="POST" action="" autocomplete="off">
+        <input type="text" name="username" placeholder="Username" required autocomplete="off" />
+        <input type="password" name="password" placeholder="Password" required autocomplete="new-password" />
+        
+        <!-- NEW: Role dropdown -->
+        <select name="role" required>
+          <option value="">Select Role</option>
+          <option value="student">Student</option>
+          <option value="teacher">Teacher</option>
+        </select>
+
+        <button type="submit">Sign Up</button>
       </form>
 
       <?php if ($success): ?>
@@ -188,6 +213,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       <a href="login.php">Already have an account? Log in</a>
     </div>
   </div>
+
+  <script>
+    window.onload = function () {
+      document.querySelector('input[name="username"]').value = "";
+      document.querySelector('input[name="password"]').value = "";
+    };
+  </script>
 
 </body>
 </html>
