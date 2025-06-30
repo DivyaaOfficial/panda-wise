@@ -7,9 +7,19 @@ if (!isset($_SESSION['username'])) {
 
 include 'db.php';
 
-// Fetch students from the database
-$sql = "SELECT id, name, email, class AS course FROM students";
-$result = $conn->query($sql);
+// Handle search input
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+// SQL with search condition
+if (!empty($search)) {
+    $stmt = $conn->prepare("SELECT id, name, email, class AS course FROM students WHERE name LIKE ?");
+    $searchParam = "%$search%";
+    $stmt->bind_param("s", $searchParam);
+} else {
+    $stmt = $conn->prepare("SELECT id, name, email, class AS course FROM students");
+}
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -62,6 +72,28 @@ $result = $conn->query($sql);
     .add-btn:hover {
       background: #594bc8;
       transform: translateY(-2px);
+    }
+
+    .search-form {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .search-form input[type="text"] {
+      padding: 10px;
+      width: 250px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .search-form button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #6a5acd;
+      color: white;
+      cursor: pointer;
+      margin-left: 10px;
     }
 
     table {
@@ -138,13 +170,18 @@ $result = $conn->query($sql);
 
     <a href="add_student.php" class="add-btn">+ Add Student</a>
 
+    <form class="search-form" method="GET">
+      <input type="text" name="search" placeholder="Search by student name..." value="<?= htmlspecialchars($search) ?>">
+      <button type="submit">Search</button>
+    </form>
+
     <?php
     if ($result === false) {
         echo "<div class='error-message'>❌ SQL Error: " . $conn->error . "</div>";
     } elseif ($result->num_rows === 0) {
-        echo "<div class='debug-message'>✅ Query worked, but no students found. Please add some students first.</div>";
+        echo "<div class='debug-message'>✅ No matching students found.</div>";
     } else {
-        echo "<div class='debug-message'>✅ Found " . $result->num_rows . " student(s).</div>";
+        echo "<div class='debug-message'>✅ Showing " . $result->num_rows . " student(s).</div>";
     }
     ?>
 
@@ -162,14 +199,14 @@ $result = $conn->query($sql);
         <?php if ($result && $result->num_rows > 0): ?>
           <?php while($row = $result->fetch_assoc()): ?>
             <tr>
-              <td><?php echo htmlspecialchars($row['id']); ?></td>
-              <td><?php echo htmlspecialchars($row['name']); ?></td>
-              <td><?php echo htmlspecialchars($row['email']); ?></td>
-              <td><?php echo htmlspecialchars($row['course']); ?></td>
+              <td><?= htmlspecialchars($row['id']) ?></td>
+              <td><?= htmlspecialchars($row['name']) ?></td>
+              <td><?= htmlspecialchars($row['email']) ?></td>
+              <td><?= htmlspecialchars($row['course']) ?></td>
               <td class="actions">
-                <a href="edit_student.php?id=<?php echo $row['id']; ?>">Edit</a>
-                <a href="delete_student.php?id=<?php echo $row['id']; ?>" onclick="return confirm('Are you sure you want to delete this student?')">Delete</a>
-                <a href="student_profile.php?id=<?php echo $row['id']; ?>">View</a>
+                <a href="edit_student.php?id=<?= $row['id'] ?>">Edit</a>
+                <a href="delete_student.php?id=<?= $row['id'] ?>" onclick="return confirm('Are you sure you want to delete this student?')">Delete</a>
+                <a href="student_profile.php?id=<?= $row['id'] ?>">View</a>
               </td>
             </tr>
           <?php endwhile; ?>
